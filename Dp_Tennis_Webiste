@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DP Tennis Center - Your Ultimate Tennis Destination</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1a202c; /* Darker text for contrast */
+            /* Tennis Court Background */
+            background-image: url('https://placehold.co/1920x1080/004d00/ffffff?text=Tennis+Court+Background'); /* Placeholder image, replace with your own */
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center; /* Center the image */
+            background-attachment: fixed; /* Keep the background fixed while scrolling */
+            background-color: #e6ffe6; /* Fallback color */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #d1fae5; /* Light green track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #34d399; /* Medium green thumb */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981; /* Darker green on hover */
+        }
+
+        /* Custom Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceOnce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            20% {
+                transform: translateY(-8px);
+            }
+            40% {
+                transform: translateY(0);
+            }
+            60% {
+                transform: translateY(-4px);
+            }
+            80% {
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fadeInDown 1s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 0.3s; /* Delay for sequential animation */
+        }
+
+        .animate-bounce-once {
+            animation: bounceOnce 1.5s ease-in-out;
+        }
+
+        /* Overlay for readability on sections */
+        .content-section-overlay {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            padding: 16px 0; /* Tailwind py-16 */
+            margin-top: -16px; /* Adjust for padding */
+            margin-bottom: -16px; /* Adjust for padding */
+        }
+
+        /* Darker overlay for hero and contact sections */
+        .dark-overlay {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-green-900 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <a href="#" class="flex items-center space-x-3">
+                <!-- Logo -->
+                <img src="http://googleusercontent.com/file_content/1" alt="DP Tennis Center Logo" class="h-10 w-auto">
+                <span class="text-2xl font-bold tracking-tight">DP Tennis Center</span>
+            </a>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#home" class="hover:text-green-200 transition duration-300">Home</a></li>
+                    <li><a href="#services" class="hover:text-green-200 transition duration-300">Services</a></li>
+                    <li><a href="#about" class="hover:text-green-200 transition duration-300">About Us</a></li>
+                    <li><a href="#contact" class="hover:text-green-200 transition duration-300">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-gradient-to-r from-green-600 to-green-800 text-white py-20 md:py-32 text-center shadow-inner dark-overlay">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 animate-fade-in-down">
+                Welcome to <span class="text-lime-300">DP Tennis Center</span>
+            </h1>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90 animate-fade-in-up">
+                Your premier destination for tennis excellence. From expert coaching to top-notch courts, we have everything you need to enhance your game.
+            </p>
+            <a href="#services"
+               class="inline-block bg-lime-400 text-green-900 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-lime-300 hover:scale-105 transition duration-300 transform animate-bounce-once">
+                Explore Our Services
+            </a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 md:py-24 content-section-overlay">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-center text-gray-800 mb-12">
+                Our Services
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1: Tennis Coaching -->
+                <div class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300">
+                    <div class="text-5xl text-green-700 mb-4 text-center">👨‍🏫</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Expert Tennis Coaching</h3>
+                    <p class="text-gray-600 text-center">
+                        Improve your game with personalized coaching sessions from certified professionals. All skill levels welcome!
+                    </p>
+                </div>
+                <!-- Service 2: Tennis Court Rental -->
+                <div class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300">
+                    <div class="text-5xl text-green-700 mb-4 text-center">🏟️</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Hourly Court Rentals</h3>
+                    <p class="text-gray-600 text-center">
+                        Rent our high-quality tennis courts by the hour. Perfect for practice, friendly matches, or group sessions.
+                    </p>
+                </div>
+                <!-- Service 3: Tennis Tournaments -->
+                <div class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300">
+                    <div class="text-5xl text-green-700 mb-4 text-center">🏆</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Exciting Tennis Tournaments</h3>
+                    <p class="text-gray-600 text-center">
+                        Participate in our regularly hosted tennis tournaments. Compete, challenge yourself, and win great prizes!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-16 md:py-24 content-section-overlay">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-gray-800 mb-8">
+                About DP Tennis Center
+            </h2>
+            <p class="text-lg text-gray-700 max-w-3xl mx-auto mb-8">
+                DP Tennis Center is dedicated to fostering a vibrant tennis community. We provide state-of-the-art facilities and a supportive environment for players of all ages and abilities to learn, play, and compete. Our passion for tennis drives us to offer the best services and experiences.
+            </p>
+            <p class="text-lg text-gray-700 max-w-3xl mx-auto">
+                Join us to discover your potential, improve your skills, and enjoy the beautiful game of tennis to its fullest.
+            </p>
+        </div>
+    </section>
+
+    <!-- Call to Action / Contact Section -->
+    <section id="contact" class="bg-green-900 text-white py-16 md:py-24 text-center dark-overlay">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-5xl font-extrabold mb-6">
+                Ready to Join Us?
+            </h2>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
+                Contact us today to book a court, schedule a coaching session, or learn more about our upcoming tournaments.
+            </p>
+            <div class="flex flex-col items-center space-y-4">
+                <a href="mailto:info@dptenniscenter.com"
+                   class="inline-block bg-lime-400 text-green-900 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-lime-300 hover:scale-105 transition duration-300 transform">
+                    Get in Touch
+                </a>
+                <p class="text-lg md:text-xl opacity-90">
+                    Or call us at: <a href="tel:+919848175452" class="text-white hover:text-green-200 transition duration-300 font-semibold">+91 9848175452</a>
+                </p>
+                <p class="text-lg md:text-xl opacity-90">
+                    Find us on Google Maps: <a href="https://maps.app.goo.gl/GN6HT4TVyKHmbNkT9" target="_blank" class="text-white hover:text-green-200 transition duration-300 font-semibold flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt mr-2"></i> Our Location
+                    </a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-950 text-white py-8">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2025 DP Tennis Center. All rights reserved.</p>
+            <p class="mt-2">Serving aces and smiles since 2025.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="https://www.instagram.com/dp_tennis_center/" target="_blank" class="text-white hover:text-lime-400 transition duration-300">
+                    <i class="fab fa-instagram text-2xl"></i>
+                </a>
+                <!-- You can add more social media icons here if needed -->
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
