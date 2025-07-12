@@ -113,7 +113,7 @@
         <div class="container mx-auto flex justify-between items-center px-4">
             <a href="#" class="flex items-center space-x-3">
                 <!-- Logo -->
-                <img src="Dp_Tennislog-removebg-preview.png" alt="Dp_Tennislog-removebg-preview" class="h-10 w-auto">
+                <img src="Dp_Tennislog.jpg" alt="Dp_Tennislog-removebg-preview" class="h-10 w-auto">
                 <span class="text-2xl font-bold tracking-tight">DP Tennis Center</span>
             </a>
             <nav>
