@@ -16,7 +16,7 @@
             line-height: 1.6;
             color: #1a202c; /* Darker text for contrast */
             /* Tennis Court Background */
-            background-image: url('Dp_Tennislog.jpg'); /* Placeholder image, replace with your own */
+            background-image: url('Dp_Tennislog-removebg-preview.jpg'); /* Placeholder image, replace with your own */
             background-size: cover; /* Cover the entire viewport */
             background-position: center; /* Center the image */
             background-attachment: fixed; /* Keep the background fixed while scrolling */
@@ -113,7 +113,7 @@
         <div class="container mx-auto flex justify-between items-center px-4">
             <a href="#" class="flex items-center space-x-3">
                 <!-- Logo -->
-                <img src="Dp_Tennislog.jpg" alt="DP Tennis Center Logo" class="h-10 w-auto">
+                <img src="Dp_Tennislog.jpg" alt="Dp_Tennislog-removebg-preview" class="h-10 w-auto">
                 <span class="text-2xl font-bold tracking-tight">DP Tennis Center</span>
             </a>
             <nav>
