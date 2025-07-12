@@ -116,9 +116,8 @@
             height: 100%; /* Full height */
             overflow: auto; /* Enable scroll if needed */
             background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
         }
         .modal-content {
             background-color: #fefefe;
