@@ -16,7 +16,7 @@
             line-height: 1.6;
             color: #1a202c; /* Darker text for contrast */
             /* Tennis Court Background */
-            background-image: url('https://placehold.co/1920x1080/004d00/ffffff?text=Tennis+Court+Background'); /* Placeholder image, replace with your own */
+            background-image: url('Dp_Tennislog.jpg'); /* Placeholder image, replace with your own */
             background-size: cover; /* Cover the entire viewport */
             background-position: center; /* Center the image */
             background-attachment: fixed; /* Keep the background fixed while scrolling */
