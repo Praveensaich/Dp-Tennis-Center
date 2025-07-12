@@ -16,7 +16,7 @@
             line-height: 1.6;
             color: #1a202c; /* Darker text for contrast */
             /* Tennis Court Background */
-            background-image: url('Dp_Tennislog-removebg-preview.png'); /* Placeholder image, replace with your own */
+            background-image: url('https://placehold.co/1920x1080/004d00/ffffff?text=Tennis+Court+Background'); /* Placeholder image, replace with your own */
             background-size: cover; /* Cover the entire viewport */
             background-position: center; /* Center the image */
             background-attachment: fixed; /* Keep the background fixed while scrolling */
@@ -104,6 +104,79 @@
         .dark-overlay {
             background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark */
         }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px; /* Wider for coach profiles/tournaments */
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Simple Bar Chart Styles */
+        .bar-chart-container {
+            display: flex;
+            align-items: flex-end;
+            height: 150px;
+            gap: 8px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+        .bar {
+            width: 40px;
+            background-color: #34d399; /* Green */
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease-in-out;
+        }
+        .bar.bar-comparison {
+            background-color: #facc15; /* Lime/Yellow */
+        }
+        .bar-label {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* gray-700 */
+            text-align: center;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -113,15 +186,18 @@
         <div class="container mx-auto flex justify-between items-center px-4">
             <a href="#" class="flex items-center space-x-3">
                 <!-- Logo -->
-                <img src="Dp_Tennislog.jpg" alt="Dp_Tennislog-removebg-preview" class="h-10 w-auto">
+                <img src="https://placehold.co/40x40/006400/FFFFFF?text=DP" alt="DP Tennis Center Logo" class="h-10 w-auto rounded-full">
                 <span class="text-2xl font-bold tracking-tight">DP Tennis Center</span>
             </a>
             <nav>
                 <ul class="flex space-x-6">
                     <li><a href="#home" class="hover:text-green-200 transition duration-300">Home</a></li>
                     <li><a href="#services" class="hover:text-green-200 transition duration-300">Services</a></li>
+                    <li><a href="#live-matches" class="hover:text-green-200 transition duration-300">Live Matches</a></li>
                     <li><a href="#about" class="hover:text-green-200 transition duration-300">About Us</a></li>
                     <li><a href="#contact" class="hover:text-green-200 transition duration-300">Contact</a></li>
+                    <li><button id="loginButton" class="px-4 py-2 bg-lime-500 text-green-900 font-bold rounded-full shadow-md hover:bg-lime-400 transition duration-300">Login</button></li>
+                    <li class="hidden" id="logoutContainer"><button id="logoutButton" class="px-4 py-2 bg-red-600 text-white font-bold rounded-full shadow-md hover:bg-red-700 transition duration-300">Logout</button></li>
                 </ul>
             </nav>
         </div>
@@ -136,10 +212,185 @@
             <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90 animate-fade-in-up">
                 Your premier destination for tennis excellence. From expert coaching to top-notch courts, we have everything you need to enhance your game.
             </p>
+            
             <a href="#services"
                class="inline-block bg-lime-400 text-green-900 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-lime-300 hover:scale-105 transition duration-300 transform animate-bounce-once">
                 Explore Our Services
             </a>
+        </div>
+    </section>
+
+    <!-- Player Dashboard Section (Initially Hidden) -->
+    <section id="playerDashboard" class="py-16 md:py-24 content-section-overlay hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-center text-green-800 mb-12">
+                Welcome, <span id="dashboardPlayerName">Player!</span>
+            </h2>
+
+            <!-- Player Info, Ranking, Matches Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-green-50 p-6 rounded-lg shadow-md border border-green-100">
+                    <h3 class="text-2xl font-bold text-green-700 mb-3">My Profile</h3>
+                    <p class="text-lg text-gray-700 mb-2"><span class="font-semibold">Email:</span> <span id="dashboardPlayerEmail"></span></p>
+                    <p class="text-lg text-gray-700 mb-2"><span class="font-semibold">Current Ranking:</span> <span id="dashboardPlayerRanking">N/A</span></p>
+                    <p class="text-lg text-gray-700 mb-2"><span class="font-semibold">Matches Played:</span> <span id="dashboardMatchesPlayed">0</span></p>
+                    <p class="text-lg text-gray-700"><span class="font-semibold">Matches Won:</span> <span id="dashboardMatchesWon">0</span></p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg shadow-md border border-green-100 md:col-span-2">
+                    <h3 class="text-2xl font-bold text-green-700 mb-3">Match Performance</h3>
+                    <p class="text-lg text-gray-700 mb-4">Win Rate: <span id="dashboardWinRate">0%</span></p>
+                    <div class="w-full bg-gray-200 rounded-full h-8 mb-2">
+                        <div id="winRateBar" class="bg-lime-500 h-8 rounded-full text-white text-right pr-2 flex items-center justify-end" style="width:0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 mt-1">
+                        <span>Wins</span>
+                        <span>Losses</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fees & Payments and Coaching Dates -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-green-50 p-6 rounded-lg shadow-md border border-green-100">
+                    <h3 class="text-2xl font-bold text-green-700 mb-3">Fees & Payments</h3>
+                    <p class="text-lg text-gray-700 mb-2"><span class="font-semibold">Total Fees Paid:</span> ₹<span id="dashboardFeesPaid">0.00</span></p>
+                    <p class="text-lg text-gray-700 mb-2"><span class="font-semibold">Last Payment:</span> <span id="dashboardLastPayment">N/A</span></p>
+                    <button class="mt-4 px-6 py-2 bg-lime-500 text-green-900 font-bold rounded-full shadow-md hover:bg-lime-400 transition duration-300" onclick="showMessageBox('Payment gateway integration would go here. This is a placeholder.', 'info')">
+                        Make a Payment
+                    </button>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg shadow-md border border-green-100">
+                    <h3 class="text-2xl font-bold text-green-700 mb-3">Coaching Schedule</h3>
+                    <ul id="dashboardCoachingDates" class="list-disc list-inside text-gray-700 space-y-1">
+                        <!-- Coaching dates will be populated here by JS -->
+                    </ul>
+                    <p id="noCoachingDates" class="text-gray-600 hidden">No upcoming coaching sessions.</p>
+                </div>
+            </div>
+
+            <!-- Court Booking Section -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">Book a Court</h3>
+                <div class="mb-4">
+                    <label for="courtSelect" class="block text-lg font-medium text-gray-700 mb-2">Select Court:</label>
+                    <select id="courtSelect" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg w-full max-w-xs mb-4">
+                        <option value="Court 1">DP Tennis Center Court 1</option>
+                        <option value="Court 2">DP Tennis Center Court 2</option>
+                    </select>
+                    <label for="bookingDate" class="block text-lg font-medium text-gray-700 mb-2">Select Date:</label>
+                    <input type="date" id="bookingDate" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg w-full max-w-xs">
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 mb-3">Available Slots (<span id="selectedCourtDisplay">Court 1</span>)</h4>
+                <div id="availableSlots" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Slots will be populated by JS -->
+                </div>
+                <p id="noSlotsAvailable" class="text-gray-600 mt-4 hidden">No slots available for the selected date.</p>
+            </div>
+
+            <!-- Upcoming Tournaments -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">Upcoming Tournaments</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-2 px-3">Tournament Name</th>
+                                <th scope="col" class="py-2 px-3">Date</th>
+                                <th scope="col" class="py-2 px-3">Fee (INR)</th>
+                                <th scope="col" class="py-2 px-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcomingTournamentsTableBody">
+                            <!-- Upcoming tournaments will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <p id="noUpcomingTournaments" class="text-gray-600 mt-4 hidden">No upcoming tournaments at the moment.</p>
+            </div>
+
+            <!-- Player Comparison -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">Player Comparison</h3>
+                <div class="mb-4">
+                    <label for="comparePlayerSelect" class="block text-lg font-medium text-gray-700 mb-2">Compare with:</label>
+                    <select id="comparePlayerSelect" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg w-full max-w-xs">
+                        <option value="none">Select a player</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <div id="comparisonCharts" class="hidden">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">Win Rate Comparison</h4>
+                    <div class="flex justify-around items-end mb-8 bar-chart-container">
+                        <div class="flex flex-col items-center">
+                            <div id="yourWinRateBar" class="bar" style="height:0%;"></div>
+                            <span class="bar-label">You</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div id="compareWinRateBar" class="bar bar-comparison" style="height:0%;"></div>
+                            <span class="bar-label" id="comparePlayerLabel"></span>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">Matches Played Comparison</h4>
+                    <div class="flex justify-around items-end bar-chart-container">
+                        <div class="flex flex-col items-center">
+                            <div id="yourMatchesPlayedBar" class="bar" style="height:0%;"></div>
+                            <span class="bar-label">You</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div id="compareMatchesPlayedBar" class="bar bar-comparison" style="height:0%;"></div>
+                            <span class="bar-label" id="comparePlayerMatchesPlayedLabel"></span>
+                        </div>
+                    </div>
+                </div>
+                <p id="noComparisonSelected" class="text-gray-600 mt-4">Select a player above to see comparison charts.</p>
+            </div>
+
+            <!-- Match History / Stats -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">My Match History</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-2 px-3">Date</th>
+                                <th scope="col" class="py-2 px-3">Opponent</th>
+                                <th scope="col" class="py-2 px-3">Score</th>
+                                <th scope="col" class="py-2 px-3">Result</th>
+                                <th scope="col" class="py-2 px-3">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matchHistoryTableBody">
+                            <!-- Match history will be populated here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <p id="noMatchHistory" class="text-gray-600 mt-4 hidden">No match history recorded yet.</p>
+            </div>
+
+            <!-- Global Tennis Updates -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">Global Tennis Updates</h3>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li><span class="font-semibold">Wimbledon 2025:</span> Quarter-finals underway, exciting matches expected!</li>
+                    <li><span class="font-semibold">ATP Rankings:</span> New world number one announced this week.</li>
+                    <li><span class="font-semibold">Youth Development:</span> ITF launches new program for aspiring juniors.</li>
+                    <li class="text-sm text-gray-500"> (Content from a real news API would go here)</li>
+                </ul>
+            </div>
+
+            <!-- Improvement Tips -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <h3 class="text-2xl font-bold text-green-800 mb-4">Improvement Tips</h3>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li>Focus on your footwork: Quick, small steps are key for recovery.</li>
+                    <li>Practice your serve toss: Consistency leads to power and accuracy.</li>
+                    <li>Develop a strong backhand slice: A versatile shot for defense and offense.</li>
+                    <li>Watch professional matches: Analyze their strategies and techniques.</li>
+                    <li class="text-sm text-gray-500"> (More personalized tips could be generated by an LLM here)</li>
+                </ul>
+            </div>
         </div>
     </section>
 
@@ -151,7 +402,7 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Service 1: Tennis Coaching -->
-                <div class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300">
+                <div id="coachingServiceCard" class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300 cursor-pointer">
                     <div class="text-5xl text-green-700 mb-4 text-center">👨‍🏫</div>
                     <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Expert Tennis Coaching</h3>
                     <p class="text-gray-600 text-center">
@@ -167,7 +418,7 @@
                     </p>
                 </div>
                 <!-- Service 3: Tennis Tournaments -->
-                <div class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300">
+                <div id="tournamentsServiceCard" class="bg-green-50 p-8 rounded-xl shadow-lg border border-green-100 transform hover:scale-105 transition duration-300 cursor-pointer">
                     <div class="text-5xl text-green-700 mb-4 text-center">🏆</div>
                     <h3 class="text-2xl font-bold text-gray-800 mb-3 text-center">Exciting Tennis Tournaments</h3>
                     <p class="text-gray-600 text-center">
@@ -177,6 +428,213 @@
             </div>
         </div>
     </section>
+
+    <!-- Live Matches Section -->
+    <section id="live-matches" class="py-16 md:py-24 content-section-overlay">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-center text-gray-800 mb-12">
+                Live Matches
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Live Match 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Men's Singles Final</h3>
+                    <p class="text-lg font-semibold text-gray-700 mb-2">Player A vs. Player B</p>
+                    <p class="text-xl font-extrabold text-green-700 mb-4">Score: 6-4, 3-2 (Live)</p>
+                    <button class="view-details-btn px-6 py-3 bg-lime-500 text-green-900 font-bold rounded-full shadow-md hover:bg-lime-400 transition duration-300 w-full">
+                        Watch Live / View Details
+                    </button>
+                    <div class="match-details hidden mt-4">
+                        <div class="aspect-w-16 aspect-h-9 mb-4">
+                            <!-- YouTube Embed - Replace with actual live stream ID -->
+                            <iframe class="w-full aspect-video rounded-lg" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=1&showinfo=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Detailed Scorecard</h4>
+                        <table class="min-w-full text-sm text-left text-gray-700">
+                            <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="py-2 px-3">Player</th>
+                                    <th scope="col" class="py-2 px-3">Set 1</th>
+                                    <th scope="col" class="py-2 px-3">Set 2</th>
+                                    <th scope="col" class="py-2 px-3">Set 3</th>
+                                    <th scope="col" class="py-2 px-3">Games</th>
+                                    <th scope="col" class="py-2 px-3">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Player A</td>
+                                    <td class="py-2 px-3">6</td>
+                                    <td class="py-2 px-3">3</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">9</td>
+                                    <td class="py-2 px-3">40</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Player B</td>
+                                    <td class="py-2 px-3">4</td>
+                                    <td class="py-2 px-3">2</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">6</td>
+                                    <td class="py-2 px-3">30</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-sm text-gray-500 mt-4">Player A: Dominant serve, strong forehand. Player B: Excellent backhand, good net play.</p>
+                    </div>
+                </div>
+
+                <!-- Live Match 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Women's Doubles Semi-Final</h3>
+                    <p class="text-lg font-semibold text-gray-700 mb-2">Team X vs. Team Y</p>
+                    <p class="text-xl font-extrabold text-green-700 mb-4">Score: 7-5, 1-0 (Live)</p>
+                    <button class="view-details-btn px-6 py-3 bg-lime-500 text-green-900 font-bold rounded-full shadow-md hover:bg-lime-400 transition duration-300 w-full">
+                        Watch Live / View Details
+                    </button>
+                    <div class="match-details hidden mt-4">
+                        <div class="aspect-w-16 aspect-h-9 mb-4">
+                            <!-- YouTube Embed - Replace with actual live stream ID -->
+                            <iframe class="w-full aspect-video rounded-lg" src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=0&controls=1&showinfo=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Detailed Scorecard</h4>
+                        <table class="min-w-full text-sm text-left text-gray-700">
+                            <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="py-2 px-3">Team</th>
+                                    <th scope="col" class="py-2 px-3">Set 1</th>
+                                    <th scope="col" class="py-2 px-3">Set 2</th>
+                                    <th scope="col" class="py-2 px-3">Set 3</th>
+                                    <th scope="col" class="py-2 px-3">Games</th>
+                                    <th scope="col" class="py-2 px-3">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Team X</td>
+                                    <td class="py-2 px-3">7</td>
+                                    <td class="py-2 px-3">1</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">8</td>
+                                    <td class="py-2 px-3">15</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Team Y</td>
+                                    <td class="py-2 px-3">5</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">5</td>
+                                    <td class="py-2 px-3">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-sm text-gray-500 mt-4">Team X: Strong volleys. Team Y: Aggressive baseline play.</p>
+                    </div>
+                </div>
+
+                <!-- Live Match 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Junior Boys Exhibition</h3>
+                    <p class="text-lg font-semibold text-gray-700 mb-2">Young Star 1 vs. Young Star 2</p>
+                    <p class="text-xl font-extrabold text-green-700 mb-4">Score: 2-2 (Live)</p>
+                    <button class="view-details-btn px-6 py-3 bg-lime-500 text-green-900 font-bold rounded-full shadow-md hover:bg-lime-400 transition duration-300 w-full">
+                        Watch Live / View Details
+                    </button>
+                    <div class="match-details hidden mt-4">
+                        <div class="aspect-w-16 aspect-h-9 mb-4">
+                            <!-- YouTube Embed - Replace with actual live stream ID -->
+                            <iframe class="w-full aspect-video rounded-lg" src="https://www.youtube.com/embed/kf_Y341bJ_w?autoplay=0&controls=1&showinfo=0&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Detailed Scorecard</h4>
+                        <table class="min-w-full text-sm text-left text-gray-700">
+                            <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="py-2 px-3">Player</th>
+                                    <th scope="col" class="py-2 px-3">Set 1</th>
+                                    <th scope="col" class="py-2 px-3">Set 2</th>
+                                    <th scope="col" class="py-2 px-3">Set 3</th>
+                                    <th scope="col" class="py-2 px-3">Games</th>
+                                    <th scope="col" class="py-2 px-3">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Young Star 1</td>
+                                    <td class="py-2 px-3">2</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">2</td>
+                                    <td class="py-2 px-3">30</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="py-2 px-3 font-medium text-gray-900">Young Star 2</td>
+                                    <td class="py-2 px-3">2</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">0</td>
+                                    <td class="py-2 px-3">2</td>
+                                    <td class="py-2 px-3">40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-sm text-gray-500 mt-4">Young Star 1: Promising serve. Young Star 2: Agile and quick.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coach Profiles Modal -->
+    <div id="coachProfilesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeCoachProfilesModal">&times;</span>
+            <h2 class="text-3xl font-bold text-center text-green-800 mb-6">Our Expert Coaches</h2>
+            <div id="coachProfilesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Coach profiles will be populated here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournaments Modal -->
+    <div id="tournamentsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeTournamentsModal">&times;</span>
+            <h2 class="text-3xl font-bold text-center text-green-800 mb-6">Exciting Tennis Tournaments</h2>
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Upcoming Tournaments</h3>
+            <div class="overflow-x-auto mb-8">
+                <table class="min-w-full text-sm text-left text-gray-700">
+                    <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-2 px-3">Tournament Name</th>
+                            <th scope="col" class="py-2 px-3">Date</th>
+                            <th scope="col" class="py-2 px-3">Fee (INR)</th>
+                            <th scope="col" class="py-2 px-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalUpcomingTournamentsTableBody">
+                        <!-- Upcoming tournaments will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Past Winners</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left text-gray-700">
+                    <thead class="text-xs text-gray-900 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-2 px-3">Tournament Name</th>
+                            <th scope="col" class="py-2 px-3">Year</th>
+                            <th scope="col" class="py-2 px-3">Winner (Men's Singles)</th>
+                            <th scope="col" class="py-2 px-3">Winner (Women's Singles)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pastWinnersTableBody">
+                        <!-- Past winners will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- About Us Section -->
     <section id="about" class="py-16 md:py-24 content-section-overlay">
@@ -232,6 +690,657 @@
             </div>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeLoginModal">&times;</span>
+            <h2 class="text-3xl font-bold text-center text-green-800 mb-6">Login to Your Account</h2>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="loginEmail" class="block text-lg font-medium text-gray-700 mb-2">Email:</label>
+                    <input type="email" id="loginEmail" value="user@example.com"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg">
+                </div>
+                <div>
+                    <label for="loginPassword" class="block text-lg font-medium text-gray-700 mb-2">Password:</label>
+                    <input type="password" id="loginPassword" value="password123"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg">
+                </div>
+                <button type="submit"
+                        class="w-full py-3 bg-lime-500 text-green-900 font-bold rounded-full shadow-lg hover:bg-lime-400 transition duration-300 text-xl">
+                    Login
+                </button>
+                <p id="loginMessage" class="text-center text-red-600 mt-4 hidden">Invalid credentials.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Box for Alerts -->
+    <div id="messageBox" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-8 rounded-lg shadow-2xl text-center max-w-sm w-full">
+            <p id="messageText" class="text-xl font-semibold text-gray-800 mb-6"></p>
+            <button id="closeMessageBox"
+                    class="px-6 py-3 bg-green-600 text-white text-lg font-bold rounded-full shadow-md hover:bg-green-700 transition duration-300">
+                OK
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // Sample User Data
+        const sampleUser = {
+            email: 'user@example.com',
+            password: 'password123',
+            name: 'Alex Smith',
+            ranking: '#123 Local',
+            matchesPlayed: 25,
+            matchesWon: 18,
+            feesPaid: 25000.00, // INR
+            lastPaymentDate: '2025-06-20',
+            coachingDates: [
+                '2025-07-20 (10:00 AM) - Coach John',
+                '2025-07-25 (02:00 PM) - Coach Sarah',
+                '2025-08-01 (09:00 AM) - Coach John'
+            ],
+            matchHistory: [
+                { date: '2025-07-10', opponent: 'Opponent Alpha', score: '6-3, 6-2', result: 'Win', notes: 'Strong serves today!' },
+                { date: '2025-07-05', opponent: 'Opponent Beta', score: '4-6, 7-5, 3-6', result: 'Loss', notes: 'Close match, need to work on stamina.' },
+                { date: '2025-06-28', opponent: 'Opponent Gamma', score: '6-0, 6-1', result: 'Win', notes: 'Dominant performance.' }
+            ],
+            bookings: [
+                { date: '2025-07-15', time: '10:00 AM - 11:00 AM', court: 'Court 1' },
+                { date: '2025-07-18', time: '03:00 PM - 04:00 PM', court: 'Court 2' } // Sample booking for Court 2
+            ]
+        };
+
+        // Sample Coaches Data
+        const sampleCoaches = [
+            {
+                name: 'Shankar',
+                age: 45,
+                gender: 'Male',
+                experience: '20+ years coaching experience, former state-level player, specializes in advanced techniques and mental game.',
+                bio: 'Shankar has been a pillar of the DP Tennis Center for over two decades. His dedication to nurturing talent and his profound understanding of the game have helped countless players achieve their potential. He focuses on building a strong foundation and developing strategic thinking on the court.'
+            },
+            {
+                name: 'Vinay',
+                age: 32,
+                gender: 'Male',
+                experience: '10 years coaching experience, certified by National Tennis Association, expert in junior development and fitness.',
+                bio: 'Vinay brings a dynamic and energetic approach to coaching. He is particularly skilled at working with junior players, instilling a love for the game while focusing on fundamental skills, agility, and overall physical conditioning. His sessions are known for being both challenging and fun.'
+            }
+        ];
+
+        // Sample Tournaments Data
+        const sampleTournaments = {
+            upcoming: [
+                { name: 'Monsoon Masters 2025', date: '2025-08-20', fee: 1500, status: 'Open' },
+                { name: 'Autumn Challenge Cup', date: '2025-10-05', fee: 2000, status: 'Open' },
+                { name: 'New Year Open', date: '2026-01-10', fee: 2500, status: 'Registration Soon' }
+            ],
+            pastWinners: [
+                { name: 'DP Summer Slam', year: 2024, menWinner: 'Rohan Sharma', womenWinner: 'Priya Singh' },
+                { name: 'Winter Doubles Championship', year: 2023, menWinner: 'Team Kohli/Dhawan', womenWinner: 'Team Mirza/Sania' },
+                { name: 'Junior Spring Classic', year: 2024, menWinner: 'Aryan Gupta', womenWinner: 'Siya Reddy' }
+            ]
+        };
+
+        // Sample Other Players for Comparison
+        const sampleOtherPlayers = [
+            { name: 'Elite Player X', ranking: '#50 National', matchesPlayed: 150, matchesWon: 127 },
+            { name: 'Rising Star Y', ranking: '#200 Local', matchesPlayed: 40, matchesWon: 24 },
+            { name: 'Veteran Z', ranking: '#5 Local', matchesPlayed: 200, matchesWon: 130 }
+        ];
+
+
+        // DOM Elements
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const logoutContainer = document.getElementById('logoutContainer');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginMessage = document.getElementById('loginMessage');
+        const playerDashboard = document.getElementById('playerDashboard');
+        const dashboardPlayerName = document.getElementById('dashboardPlayerName');
+        const dashboardPlayerEmail = document.getElementById('dashboardPlayerEmail');
+        const dashboardPlayerRanking = document.getElementById('dashboardPlayerRanking');
+        const dashboardMatchesPlayed = document.getElementById('dashboardMatchesPlayed');
+        const dashboardMatchesWon = document.getElementById('dashboardMatchesWon');
+        const dashboardWinRate = document.getElementById('dashboardWinRate');
+        const winRateBar = document.getElementById('winRateBar');
+        const dashboardFeesPaid = document.getElementById('dashboardFeesPaid');
+        const dashboardLastPayment = document.getElementById('dashboardLastPayment');
+        const dashboardCoachingDates = document.getElementById('dashboardCoachingDates');
+        const noCoachingDates = document.getElementById('noCoachingDates');
+        const matchHistoryTableBody = document.getElementById('matchHistoryTableBody');
+        const noMatchHistory = document.getElementById('noMatchHistory');
+
+        const comparisonPlayerName = document.getElementById('comparisonPlayerName');
+        const comparisonPlayerRanking = document.getElementById('comparisonPlayerRanking');
+        const comparisonPlayerWinRate = document.getElementById('comparisonPlayerWinRate');
+        const comparisonPlayerMatchesPlayed = document.getElementById('comparisonPlayerMatchesPlayed');
+
+        const bookingDateInput = document.getElementById('bookingDate');
+        const courtSelect = document.getElementById('courtSelect');
+        const selectedCourtDisplay = document.getElementById('selectedCourtDisplay');
+        const availableSlotsContainer = document.getElementById('availableSlots');
+        const noSlotsAvailableMessage = document.getElementById('noSlotsAvailable');
+
+        const coachingServiceCard = document.getElementById('coachingServiceCard');
+        const coachProfilesModal = document.getElementById('coachProfilesModal');
+        const closeCoachProfilesModal = document.getElementById('closeCoachProfilesModal');
+        const coachProfilesContainer = document.getElementById('coachProfilesContainer');
+
+        const tournamentsServiceCard = document.getElementById('tournamentsServiceCard');
+        const tournamentsModal = document.getElementById('tournamentsModal');
+        const closeTournamentsModal = document.getElementById('closeTournamentsModal');
+        const modalUpcomingTournamentsTableBody = document.getElementById('modalUpcomingTournamentsTableBody');
+        const pastWinnersTableBody = document.getElementById('pastWinnersTableBody');
+
+        const comparePlayerSelect = document.getElementById('comparePlayerSelect');
+        const comparisonCharts = document.getElementById('comparisonCharts');
+        const noComparisonSelected = document.getElementById('noComparisonSelected');
+        const yourWinRateBar = document.getElementById('yourWinRateBar');
+        const compareWinRateBar = document.getElementById('compareWinRateBar');
+        const yourMatchesPlayedBar = document.getElementById('yourMatchesPlayedBar');
+        const compareMatchesPlayedBar = document.getElementById('compareMatchesPlayedBar');
+        const comparePlayerLabel = document.getElementById('comparePlayerLabel');
+        const comparePlayerMatchesPlayedLabel = document.getElementById('comparePlayerMatchesPlayedLabel');
+
+
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const closeMessageBoxBtn = document.getElementById('closeMessageBox');
+
+        // Function to show custom message box
+        function showMessageBox(message, type = 'info') {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        // Function to hide custom message box
+        function hideMessageBox() {
+            messageBox.classList.add('hidden');
+        }
+
+        // Function to update the dashboard with player data
+        function updateDashboard(user) {
+            console.log("Updating dashboard with user data:", user);
+            if (dashboardPlayerName) dashboardPlayerName.textContent = user.name;
+            if (dashboardPlayerEmail) dashboardPlayerEmail.textContent = user.email;
+            if (dashboardPlayerRanking) dashboardPlayerRanking.textContent = user.ranking;
+            if (dashboardMatchesPlayed) dashboardMatchesPlayed.textContent = user.matchesPlayed;
+            if (dashboardMatchesWon) dashboardMatchesWon.textContent = user.matchesWon;
+
+            const winRate = user.matchesPlayed > 0 ? ((user.matchesWon / user.matchesPlayed) * 100).toFixed(1) : 0;
+            if (dashboardWinRate) dashboardWinRate.textContent = `${winRate}%`;
+            if (winRateBar) winRateBar.style.width = `${winRate}%`;
+
+            if (dashboardFeesPaid) dashboardFeesPaid.textContent = user.feesPaid.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+            if (dashboardLastPayment) dashboardLastPayment.textContent = user.lastPaymentDate || 'N/A';
+
+            // Populate coaching dates
+            if (dashboardCoachingDates) {
+                dashboardCoachingDates.innerHTML = ''; // Clear previous entries
+                if (user.coachingDates && user.coachingDates.length > 0) {
+                    if (noCoachingDates) noCoachingDates.classList.add('hidden');
+                    user.coachingDates.forEach(date => {
+                        const li = document.createElement('li');
+                        li.textContent = date;
+                        dashboardCoachingDates.appendChild(li);
+                    });
+                } else {
+                    if (noCoachingDates) noCoachingDates.classList.remove('hidden');
+                }
+            }
+
+
+            // Populate match history
+            if (matchHistoryTableBody) {
+                matchHistoryTableBody.innerHTML = ''; // Clear previous entries
+                if (user.matchHistory && user.matchHistory.length > 0) {
+                    if (noMatchHistory) noMatchHistory.classList.add('hidden');
+                    user.matchHistory.forEach(match => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'bg-white border-b';
+                        tr.innerHTML = `
+                            <td class="py-2 px-3">${match.date}</td>
+                            <td class="py-2 px-3">${match.opponent}</td>
+                            <td class="py-2 px-3">${match.score}</td>
+                            <td class="py-2 px-3">${match.result}</td>
+                            <td class="py-2 px-3">${match.notes}</td>
+                        `;
+                        matchHistoryTableBody.appendChild(tr);
+                    });
+                } else {
+                    if (noMatchHistory) noMatchHistory.classList.remove('hidden');
+                }
+            }
+
+
+            // Populate player comparison for current user (default values)
+            if (comparisonPlayerName) comparisonPlayerName.textContent = user.name;
+            if (comparisonPlayerRanking) comparisonPlayerRanking.textContent = user.ranking;
+            if (comparisonPlayerWinRate) comparisonPlayerWinRate.textContent = `${winRate}%`;
+            if (comparisonPlayerMatchesPlayed) comparisonPlayerMatchesPlayed.textContent = user.matchesPlayed;
+
+            if (playerDashboard) playerDashboard.classList.remove('hidden'); // Show dashboard
+            console.log("Dashboard updated and made visible.");
+        }
+
+        // --- Court Booking Logic ---
+        const courtSlots = [
+            '09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00 PM',
+            '12:00 PM - 01:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM',
+            '03:00 PM - 04:00 PM', '04:00 PM - 05:00 PM', '05:00 PM - 06:00 PM',
+            '06:00 PM - 07:00 PM'
+        ];
+
+        function renderAvailableSlots(selectedDate, selectedCourt) {
+            console.log(`Rendering slots for date: ${selectedDate}, court: ${selectedCourt}`);
+            if (!availableSlotsContainer || !selectedCourtDisplay) {
+                console.warn("Missing DOM elements for slot rendering.");
+                return;
+            }
+            availableSlotsContainer.innerHTML = ''; // Clear previous slots
+            selectedCourtDisplay.textContent = selectedCourt; // Update display
+            
+            const bookedSlotsForDateAndCourt = sampleUser.bookings.filter(
+                b => b.date === selectedDate && b.court === selectedCourt
+            ).map(b => b.time);
+
+            let slotsFound = false;
+
+            courtSlots.forEach(slot => {
+                const isBooked = bookedSlotsForDateAndCourt.includes(slot);
+                const slotCard = document.createElement('div');
+                slotCard.className = `p-4 rounded-lg shadow-sm border ${isBooked ? 'bg-red-100 border-red-200' : 'bg-green-100 border-green-200'}`;
+                
+                slotCard.innerHTML = `
+                    <p class="font-semibold text-lg">${slot}</p>
+                    <p class="text-sm ${isBooked ? 'text-red-700' : 'text-green-700'} mt-1">
+                        ${isBooked ? 'Booked' : 'Available'}
+                    </p>
+                    <button class="mt-3 w-full py-2 text-sm font-bold rounded-full transition duration-300
+                        ${isBooked ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-lime-500 text-green-900 hover:bg-lime-400'}"
+                        ${isBooked ? 'disabled' : ''} data-time="${slot}" data-court="${selectedCourt}">
+                        ${isBooked ? 'Booked' : 'Book Now (₹500/hr)'}
+                    </button>
+                `;
+                availableSlotsContainer.appendChild(slotCard);
+                if (!isBooked) {
+                    slotsFound = true;
+                }
+            });
+
+            if (noSlotsAvailableMessage) {
+                if (slotsFound) {
+                    noSlotsAvailableMessage.classList.add('hidden');
+                } else {
+                    noSlotsAvailableMessage.classList.remove('hidden');
+                }
+            }
+
+
+            // Add event listeners to new "Book Now" buttons
+            document.querySelectorAll('#availableSlots button:not([disabled])').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const time = e.target.dataset.time;
+                    const court = e.target.dataset.court;
+                    handleBookSlot(selectedDate, time, court);
+                });
+            });
+            console.log("Slots rendered.");
+        }
+
+        function handleBookSlot(date, time, court) {
+            console.log(`Attempting to book slot: ${time} on ${date} at ${court}`);
+            // Simulate payment
+            showMessageBox(`Simulating payment of ₹500 for ${time} on ${date} at ${court}. Payment successful!`, 'success');
+
+            // Add to simulated bookings
+            sampleUser.bookings.push({ date, time, court });
+            console.log("Booking added to sampleUser.bookings:", sampleUser.bookings);
+
+            // Re-render slots to show updated availability
+            renderAvailableSlots(date, court);
+
+            showMessageBox(`Court booked successfully: ${time} on ${date} at ${court}!`, 'success');
+        }
+
+        // --- Coach Profiles Logic ---
+        function renderCoachProfiles() {
+            console.log("Rendering coach profiles.");
+            if (!coachProfilesContainer || !coachProfilesModal) {
+                console.warn("Missing DOM elements for coach profiles.");
+                return;
+            }
+            coachProfilesContainer.innerHTML = '';
+            sampleCoaches.forEach(coach => {
+                const coachCard = document.createElement('div');
+                coachCard.className = 'bg-green-50 p-6 rounded-lg shadow-md border border-green-100';
+                coachCard.innerHTML = `
+                    <h3 class="text-2xl font-bold text-green-700 mb-2">${coach.name}</h3>
+                    <p class="text-lg text-gray-700 mb-1"><span class="font-semibold">Age:</span> ${coach.age}</p>
+                    <p class="text-lg text-gray-700 mb-1"><span class="font-semibold">Gender:</span> ${coach.gender}</p>
+                    <p class="text-lg text-gray-700 mb-1"><span class="font-semibold">Experience:</span> ${coach.experience}</p>
+                    <p class="text-gray-600 mt-3">${coach.bio}</p>
+                `;
+                coachProfilesContainer.appendChild(coachCard);
+            });
+            coachProfilesModal.style.display = 'flex';
+            console.log("Coach profiles modal displayed.");
+        }
+
+        // --- Tournaments Logic ---
+        function renderTournaments() {
+            console.log("Rendering tournaments.");
+            if (!modalUpcomingTournamentsTableBody || !pastWinnersTableBody || !tournamentsModal) {
+                console.warn("Missing DOM elements for tournaments.");
+                return;
+            }
+            // Render Upcoming Tournaments
+            modalUpcomingTournamentsTableBody.innerHTML = '';
+            if (sampleTournaments.upcoming.length > 0) {
+                sampleTournaments.upcoming.forEach(tournament => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'bg-white border-b';
+                    tr.innerHTML = `
+                        <td class="py-2 px-3">${tournament.name}</td>
+                        <td class="py-2 px-3">${tournament.date}</td>
+                        <td class="py-2 px-3">₹${tournament.fee}</td>
+                        <td class="py-2 px-3">${tournament.status}</td>
+                    `;
+                    modalUpcomingTournamentsTableBody.appendChild(tr);
+                });
+            } else {
+                modalUpcomingTournamentsTableBody.innerHTML = '<tr><td colspan="4" class="py-2 px-3 text-center text-gray-600">No upcoming tournaments.</td></tr>';
+            }
+
+            // Render Past Winners
+            pastWinnersTableBody.innerHTML = '';
+            if (sampleTournaments.pastWinners.length > 0) {
+                sampleTournaments.pastWinners.forEach(winner => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'bg-white border-b';
+                    tr.innerHTML = `
+                        <td class="py-2 px-3">${winner.name}</td>
+                        <td class="py-2 px-3">${winner.year}</td>
+                        <td class="py-2 px-3">${winner.menWinner}</td>
+                        <td class="py-2 px-3">${winner.womenWinner}</td>
+                    `;
+                    pastWinnersTableBody.appendChild(tr);
+                });
+            } else {
+                pastWinnersTableBody.innerHTML = '<tr><td colspan="4" class="py-2 px-3 text-center text-gray-600">No past winners recorded.</td></tr>';
+            }
+            tournamentsModal.style.display = 'flex';
+            console.log("Tournaments modal displayed.");
+        }
+
+        // --- Player Comparison Logic ---
+        function populateComparePlayerSelect() {
+            console.log("Populating compare player select.");
+            if (!comparePlayerSelect) {
+                console.warn("comparePlayerSelect element not found.");
+                return;
+            }
+            comparePlayerSelect.innerHTML = '<option value="none">Select a player</option>';
+            sampleOtherPlayers.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.name;
+                option.textContent = `${player.name} (${player.ranking})`;
+                comparePlayerSelect.appendChild(option);
+            });
+        }
+
+        function updateComparisonCharts(selectedPlayerName) {
+            console.log("Updating comparison charts for:", selectedPlayerName);
+            if (!comparisonCharts || !noComparisonSelected || !yourWinRateBar || !compareWinRateBar || !yourMatchesPlayedBar || !compareMatchesPlayedBar || !comparePlayerLabel || !comparePlayerMatchesPlayedLabel) {
+                console.warn("Missing DOM elements for comparison charts.");
+                return;
+            }
+
+            if (selectedPlayerName === 'none') {
+                comparisonCharts.classList.add('hidden');
+                noComparisonSelected.classList.remove('hidden');
+                console.log("No comparison player selected, charts hidden.");
+                return;
+            }
+
+            noComparisonSelected.classList.add('hidden');
+            comparisonCharts.classList.remove('hidden');
+
+            const selectedPlayer = sampleOtherPlayers.find(p => p.name === selectedPlayerName);
+            if (!selectedPlayer) {
+                console.error("Selected player not found:", selectedPlayerName);
+                return;
+            }
+
+            // Win Rate Comparison
+            const yourWinRate = sampleUser.matchesPlayed > 0 ? (sampleUser.matchesWon / sampleUser.matchesPlayed) * 100 : 0;
+            const compareWinRate = selectedPlayer.matchesPlayed > 0 ? (selectedPlayer.matchesWon / selectedPlayer.matchesPlayed) * 100 : 0;
+
+            yourWinRateBar.style.height = `${Math.min(yourWinRate, 100)}%`; // Cap at 100% for visual
+            yourWinRateBar.textContent = `${yourWinRate.toFixed(0)}%`;
+            compareWinRateBar.style.height = `${Math.min(compareWinRate, 100)}%`;
+            compareWinRateBar.textContent = `${compareWinRate.toFixed(0)}%`;
+            comparePlayerLabel.textContent = selectedPlayer.name;
+
+            // Matches Played Comparison
+            const yourMatchesPlayed = sampleUser.matchesPlayed;
+            const compareMatchesPlayed = selectedPlayer.matchesPlayed;
+
+            // Normalize height based on max matches played between the two
+            const maxMatches = Math.max(yourMatchesPlayed, compareMatchesPlayed, 1); // Avoid division by zero
+            yourMatchesPlayedBar.style.height = `${(yourMatchesPlayed / maxMatches) * 100}%`;
+            yourMatchesPlayedBar.textContent = yourMatchesPlayed;
+            compareMatchesPlayedBar.style.height = `${(compareMatchesPlayed / maxMatches) * 100}%`;
+            compareMatchesPlayedBar.textContent = compareMatchesPlayed;
+            comparePlayerMatchesPlayedLabel.textContent = selectedPlayer.name;
+            console.log("Comparison charts updated.");
+        }
+
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOMContentLoaded event fired.");
+            try {
+                // Set initial booking date to today and render slots
+                if (bookingDateInput && courtSelect) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const formattedDate = `${year}-${month}-${day}`;
+                    bookingDateInput.value = formattedDate;
+                    renderAvailableSlots(formattedDate, courtSelect.value); // Render slots for today and default court
+                } else {
+                    console.warn("Booking date input or court select element not found. Skipping initial slot render.");
+                }
+
+
+                // Event listener for Live Matches details buttons
+                const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+                if (viewDetailsButtons.length > 0) {
+                    viewDetailsButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            const matchDetails = button.nextElementSibling; // The div containing details
+                            if (matchDetails) {
+                                matchDetails.classList.toggle('hidden');
+                                if (matchDetails.classList.contains('hidden')) {
+                                    button.textContent = 'Watch Live / View Details';
+                                } else {
+                                    button.textContent = 'Hide Details';
+                                }
+                            } else {
+                                console.warn("Match details element not found for button:", button);
+                            }
+                        });
+                    });
+                } else {
+                    console.warn("No .view-details-btn elements found.");
+                }
+
+
+                // Populate compare player select dropdown
+                if (comparePlayerSelect) {
+                    populateComparePlayerSelect();
+                    updateComparisonCharts('none'); // Initialize comparison charts as hidden
+                } else {
+                    console.warn("Compare player select element not found. Skipping player comparison setup.");
+                }
+
+                console.log("DOMContentLoaded script executed successfully.");
+
+            } catch (error) {
+                console.error("Error during DOMContentLoaded script execution:", error);
+                showMessageBox("An error occurred during page setup. Please try reloading. Check console for details.", 'error');
+            }
+        });
+        
+        if (bookingDateInput) {
+            bookingDateInput.addEventListener('change', (e) => {
+                if (courtSelect) {
+                    renderAvailableSlots(e.target.value, courtSelect.value);
+                }
+            });
+        }
+
+        if (courtSelect) {
+            courtSelect.addEventListener('change', (e) => {
+                if (bookingDateInput) {
+                    renderAvailableSlots(bookingDateInput.value, e.target.value);
+                }
+            });
+        }
+
+        // Show Login Modal
+        if (loginButton) {
+            loginButton.addEventListener('click', () => {
+                console.log("Login button clicked.");
+                if (loginModal) loginModal.style.display = 'flex'; // Use flex to center
+                if (loginMessage) loginMessage.classList.add('hidden'); // Hide previous messages
+                console.log("Login modal display set to flex.");
+            });
+        }
+
+
+        // Close Login Modal
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => {
+                console.log("Close login modal button clicked.");
+                if (loginModal) loginModal.style.display = 'none';
+            });
+        }
+
+
+        // Close message box
+        if (closeMessageBoxBtn) {
+            closeMessageBoxBtn.addEventListener('click', hideMessageBox);
+        }
+
+
+        // Handle Login Form Submission
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                console.log("Login form submitted.");
+                const email = loginEmailInput.value;
+                const password = loginPasswordInput.value;
+
+                if (email === sampleUser.email && password === sampleUser.password) {
+                    console.log("Login successful. Updating dashboard.");
+                    // Successful Login
+                    if (loginModal) loginModal.style.display = 'none';
+                    if (loginButton) loginButton.classList.add('hidden'); // Hide login button
+                    if (logoutContainer) logoutContainer.classList.remove('hidden'); // Show logout button container
+                    
+                    updateDashboard(sampleUser); // Update and show dashboard with sample data
+                    if (bookingDateInput && courtSelect) {
+                        renderAvailableSlots(bookingDateInput.value, courtSelect.value); // Render slots for the current date and selected court after login
+                    }
+                    if (comparePlayerSelect) {
+                        updateComparisonCharts(comparePlayerSelect.value); // Update comparison charts
+                    }
+
+
+                    // Scroll to dashboard
+                    if (playerDashboard) playerDashboard.scrollIntoView({ behavior: 'smooth' });
+
+                    showMessageBox('Login successful! Welcome to your dashboard.', 'success');
+
+                } else {
+                    console.log("Login failed: Invalid credentials.");
+                    // Failed Login
+                    if (loginMessage) {
+                        loginMessage.textContent = 'Invalid email or password.';
+                        loginMessage.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+
+
+        // Handle Logout
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                console.log("Logout button clicked.");
+                if (loginButton) loginButton.classList.remove('hidden'); // Show login button
+                if (logoutContainer) logoutContainer.classList.add('hidden'); // Hide logout button container
+                if (playerDashboard) playerDashboard.classList.add('hidden'); // Hide dashboard
+                showMessageBox('You have been logged out.', 'info');
+                // Scroll to top or hero section
+                document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+                console.log("Logged out. Dashboard hidden.");
+            });
+        }
+
+
+        // Coach Profiles Modal Trigger
+        if (coachingServiceCard) {
+            coachingServiceCard.addEventListener('click', renderCoachProfiles);
+        }
+        if (closeCoachProfilesModal) {
+            closeCoachProfilesModal.addEventListener('click', () => {
+                console.log("Close coach profiles modal clicked.");
+                if (coachProfilesModal) coachProfilesModal.style.display = 'none';
+            });
+        }
+
+
+        // Tournaments Modal Trigger
+        if (tournamentsServiceCard) {
+            tournamentsServiceCard.addEventListener('click', renderTournaments);
+        }
+        if (closeTournamentsModal) {
+            closeTournamentsModal.addEventListener('click', () => {
+                console.log("Close tournaments modal clicked.");
+                if (tournamentsModal) tournamentsModal.style.display = 'none';
+            });
+        }
+
+
+        // Player Comparison Dropdown Change
+        if (comparePlayerSelect) {
+            comparePlayerSelect.addEventListener('change', (e) => {
+                console.log("Comparison player selected:", e.target.value);
+                updateComparisonCharts(e.target.value);
+            });
+        }
+
+
+        // Initial state: Hide dashboard, show login button
+        if (playerDashboard) playerDashboard.classList.add('hidden');
+        if (loginButton) loginButton.classList.remove('hidden');
+        if (logoutContainer) logoutContainer.classList.add('hidden');
+        console.log("Initial state set: Dashboard hidden, Login button visible.");
+    </script>
 
 </body>
 </html>
